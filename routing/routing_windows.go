@@ -82,7 +82,12 @@ func (r *router) setupRouteTable() error {
 
 		for i := uint32(0); i < table.NumEntries; i++ {
 			row := (*mibIPForwardRow2)(unsafe.Pointer(uintptr(pFirstRow) + rowSize * uintptr(i)))
-			routeInfo := rtInfo{}
+			routeInfo := rtInfo{
+				Src: net.IPNet{
+					IP: make([]byte, 4),
+					Mask: make([]byte, 4),
+				},
+			}
 
 			dstAddr := make([]byte, 4)
 			copy(dstAddr, ((*sockaddrIN)(unsafe.Pointer(&row.DestinationPrefix.Prefix[0]))).SinAddr[:])
@@ -118,7 +123,12 @@ func (r *router) setupRouteTable() error {
 
 		for i := uint32(0); i < table.NumEntries; i++ {
 			row := (*mibIPForwardRow2)(unsafe.Pointer(uintptr(pFirstRow) + rowSize * uintptr(i)))
-			routeInfo := rtInfo{}
+			routeInfo := rtInfo{
+				Src: net.IPNet{
+					IP: make([]byte, 16),
+					Mask: make([]byte, 16),
+				},
+			}
 
 			dstAddr := make([]byte, 16)
 			copy(dstAddr, ((*sockaddrIN6)(unsafe.Pointer(&row.DestinationPrefix.Prefix[0]))).Sin6Addr[:])

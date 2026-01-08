@@ -53,6 +53,25 @@ loop:
 			if rt.Family != syscall.AF_INET && rt.Family != syscall.AF_INET6 {
 				continue loop
 			}
+			if rt.Family == syscall.AF_INET {
+				routeInfo.Src = net.IPNet{
+					IP: make([]byte, 4),
+					Mask: make([]byte, 4),
+				}
+				routeInfo.Dst = net.IPNet{
+					IP: make([]byte, 4),
+					Mask: make([]byte, 4),
+				}
+			} else {
+				routeInfo.Src = net.IPNet{
+					IP: make([]byte, 16),
+					Mask: make([]byte, 16),
+				}
+				routeInfo.Dst = net.IPNet{
+					IP: make([]byte, 16),
+					Mask: make([]byte, 16),
+				}
+			}
 			for _, attr := range attrs {
 				switch attr.Attr.Type {
 				case syscall.RTA_DST:

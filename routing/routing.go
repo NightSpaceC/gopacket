@@ -131,7 +131,7 @@ func (r *router) route(input int64, src, dst net.IP, ipv6 bool) (iface int64, ga
 		if !rt.Dst.Contains(dst) {
 			continue
 		}
-		if !rt.Src.Contains(src) {
+		if src != nil && !rt.Src.Contains(src) {
 			continue
 		}
 		if rt.InputIface != 0 && input != 0 && rt.InputIface != input {
@@ -244,7 +244,10 @@ func New() (Router, error) {
 		for _, addr := range ifaceAddrs {
 			if inet, ok := addr.(*net.IPNet); ok {
 				if v4 := inet.IP.To4(); v4 != nil {
-					addrs.v4 = append(addrs.v4, *inet)
+					addrs.v4 = append(addrs.v4, net.IPNet{
+						IP: v4,
+						Mask: inet.Mask,
+					})
 				} else {
 					addrs.v6 = append(addrs.v6, *inet)
 				}
